@@ -27,6 +27,10 @@ export class App extends Component {
     else if (!auth.authenticated && nextProps.auth.authenticated) {
       router.replace(paths.TASKS);
     }
+    else if (auth.authenticated)
+    {
+      router.replace(paths.TASKS);
+    }
   }
 
   render() {

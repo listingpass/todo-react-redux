@@ -9,22 +9,25 @@ import Notification from '../../components/notification';
 import TaskFilters from '../../components/task-filters';
 import TaskForm from '../../components/task-form';
 import TaskList from '../../components/task-list';
-
+import { Task } from 'src/core/tasks';
 
 export class Tasks extends Component {
-  static propTypes = {
+
+
+    static propTypes = {
     createTask: PropTypes.func.isRequired,
     deleteTask: PropTypes.func.isRequired,
     dismissNotification: PropTypes.func.isRequired,
     filterTasks: PropTypes.func.isRequired,
     filterType: PropTypes.string.isRequired,
-    loadTasks: PropTypes.func.isRequired,
+        loadTasks: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     notification: PropTypes.object.isRequired,
     tasks: PropTypes.instanceOf(List).isRequired,
     undeleteTask: PropTypes.func.isRequired,
     unloadTasks: PropTypes.func.isRequired,
-    updateTask: PropTypes.func.isRequired
+    updateTask: PropTypes.func.isRequired,
+    editThisTask: PropTypes.instanceOf(Task)
   };
 
   componentWillMount() {
@@ -59,7 +62,7 @@ export class Tasks extends Component {
     return (
       <div className="g-row">
         <div className="g-col">
-          <TaskForm createTask={this.props.createTask} />
+          <TaskForm createTask={this.props.createTask} updateTask={this.props.updateTask} tasks={this.props.tasks} editThisTask={this.props.editThisTask}/>
         </div>
 
         <div className="g-col">

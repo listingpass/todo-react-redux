@@ -14,9 +14,9 @@ import {
 } from './action-types';
 
 
-export function createTask(title) {
+export function createTask(employee, job, service, time, note) {
   return dispatch => {
-    taskList.push({completed: false, title})
+    taskList.push({ employee: employee, job: job, service: service,  time: time,  note: note, completed: false, approved: false })
       .catch(error => dispatch(createTaskError(error)));
   };
 }
@@ -60,7 +60,7 @@ export function undeleteTask() {
   return (dispatch, getState) => {
     const task = getDeletedTask(getState());
     if (task) {
-      taskList.set(task.key, {completed: task.completed, title: task.title})
+      taskList.set( task.key, {completed: task.completed, time: task.time, employee:task.employee, service:task.service, job:task.job, note: task.note, approved: task.approved })
         .catch(error => dispatch(undeleteTaskError(error)));
     }
   };

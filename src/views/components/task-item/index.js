@@ -1,8 +1,6 @@
 import classNames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 import { Task } from 'src/core/tasks';
-
-
 class TaskItem extends Component {
   static propTypes = {
     deleteTask: PropTypes.func.isRequired,
@@ -13,14 +11,22 @@ class TaskItem extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.state = {editing: false};
+    this.state = {
+      editing: false,
+      time: 0,
+      employee: '',
+      service: '',
+      job: '',
+      note: ''
+    };
 
     this.delete = ::this.delete;
-    this.editTitle = ::this.editTitle;
-    this.saveTitle = ::this.saveTitle;
+    this.editTask = ::this.editTask;
+    this.saveTask = ::this.saveTask;
     this.stopEditing = ::this.stopEditing;
     this.toggleStatus = ::this.toggleStatus;
     this.onKeyUp = ::this.onKeyUp;
+    this.onChange = ::this.onChange;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -32,25 +38,63 @@ class TaskItem extends Component {
     this.props.deleteTask(this.props.task);
   }
 
-  editTitle() {
+  editTask() {
+    const task = this.props.task;
+    this.setState({
+      time: task.time,
+      employee: task.employee,
+      service: task.service,
+      job: task.job,
+      note: task.note
+    });
+
     this.setState({editing: true});
   }
 
-  saveTitle(event) {
-    if (this.state.editing) {
-      const { task } = this.props;
-      const title = event.target.value.trim();
+  saveTask(event) {
+          const { task } = this.props;
+          const value = event.target.value.trim();
+              this.props.updateTask(task, {service: value });
+              this.setState({service: event.target.value});
+              this.props.updateTask(task, {employee: value });
+              this.setState({employee: event.target.value});
+              this.props.updateTask(task, {note: value });
+              this.setState({note: event.target.value});
+              this.props.updateTask(task, {job: value });
+              this.setState({job: event.target.value});
+              this.props.updateTask(task, {time: value });
+              this.setState({time: event.target.value});
 
-      if (title.length && title !== task.title) {
-        this.props.updateTask(task, {title});
-      }
 
-      this.stopEditing();
-    }
+    this.stopEditing();
+
   }
+  onChange(event) {
 
+    switch (event.target.name){
+      case "Service":
+        this.setState({service: event.target.value});
+        break;
+      case "Employee":
+        this.setState({employee: event.target.value});
+        break;
+      case "Note":
+        this.setState({note: event.target.value});
+        break;
+      case "Job":
+        this.setState({job: event.target.value});
+        break;
+      case "Time":
+          this.setState({time: event.target.value});
+          break;
+      default:
+        break;
+    }
+
+  }
   stopEditing() {
     this.setState({editing: false});
+
   }
 
   toggleStatus() {
@@ -60,7 +104,7 @@ class TaskItem extends Component {
 
   onKeyUp(event) {
     if (event.keyCode === 13) {
-      this.saveTitle(event);
+      this.saveTask(event);
     }
     else if (event.keyCode === 27) {
       this.stopEditing();
@@ -69,27 +113,92 @@ class TaskItem extends Component {
 
   renderTitle(task) {
     return (
-      <div
-        className="task-item__title"
-        ref={c => this.titleText = c}
-        tabIndex="0">{task.title}
-      </div>
-    );
-  }
-
-  renderTitleInput(task) {
+        <div className="taskItem">
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <h3 className="panel-title" ref={c => this.timeText = c}>
+              <strong>Hours: </strong>{task.time}</h3><br/>
+              </div>
+                <div className="panel-body">
+                  <div ref={c => this.jobText = c}>Job: {task.job}</div>
+                  <div ref={c => this.serviceText = c}><h3><strong>Service: </strong></h3>{task.service}</div>
+                  <div className="itemDescription" ref={c => this.noteText = c} >
+                    <strong>notes: </strong>{task.note}</div>
+                </div>
+          </div></div>
+          );
+          }
+  renderTask(task) {
     return (
-      <input
+
+        <div>
+          <input
+              id="Time"
+              name="Time"
+              autoComplete="off"
+              className="TimeListI"
+              maxLength="2"
+              onKeyUp={this.onKeyUp}
+              placeholder="Hours"
+              ref={c => this.timeInput = c}
+              type="number"
+              value={this.state.time}
+              onChange={this.onChange}
+              onSubmit={this.saveTask}/>
+        <input
+        name="Employee"
         autoComplete="off"
-        autoFocus
-        className="task-item__input"
-        defaultValue={task.title}
+        className="EmployeeListI"
         maxLength="64"
-        onBlur={this.saveTitle}
         onKeyUp={this.onKeyUp}
-        ref={c => this.titleInput = c}
+        placeholder="Employee"
+        ref={c => this.employeeInput = c}
         type="text"
-      />
+        id="Employee"
+        onChange={this.onChange}
+        onSubmit={this.saveTask}
+        value={this.state.employee}/>
+          <input
+              id="Job"
+              name="Job"
+              autoComplete="off"
+              className="JobListI"
+              maxLength="64"
+              onSubmit={::this.saveTask}
+              onKeyUp={this.onKeyUp}
+              placeholder="Job"
+              ref={c => this.jobInput = c}
+              type="text"
+              onChange={this.onChange}
+              value={this.state.job}/>
+    <input
+    name="Service"
+    autoComplete="off"
+    className="ServiceListI"
+    maxLength="64"
+    onSubmit={::this.saveTask}
+    onKeyUp={this.onKeyUp}
+    placeholder="Service"
+    ref={c => this.serviceInput = c}
+    type="text"
+    id="Service"
+    onChange={this.onChange}
+    value={this.state.service}/>
+          <input
+    id="Note"
+    name="Note"
+    autoComplete="off"
+    className="NoteListI"
+    maxLength="64"
+    onSubmit={this.saveTask}
+    onKeyUp={this.onKeyUp}
+    placeholder="Note"
+    ref={c => this.noteInput = c}
+    type="text"
+    value={this.state.note}
+    onChange={this.onChange}
+          />
+</div>
     );
   }
 
@@ -114,7 +223,7 @@ class TaskItem extends Component {
         </div>
 
         <div className="cell">
-          {editing ? this.renderTitleInput(task) : this.renderTitle(task)}
+          {editing ? this.renderTask(task) : this.renderTitle(task)}
         </div>
 
         <div className="cell">
@@ -134,7 +243,7 @@ class TaskItem extends Component {
             aria-hidden={editing}
             aria-label="Edit task"
             className={classNames('btn task-item__button', {'hide': editing})}
-            onClick={this.editTitle}
+            onClick={this.editTask}
             ref={c => this.editButton = c}
             type="button">
             <svg className="icon" width="24" height="24" viewBox="0 0 24 24">

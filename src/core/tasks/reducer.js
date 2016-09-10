@@ -2,6 +2,7 @@ import { List, Record } from 'immutable';
 
 import {
   SIGN_OUT_SUCCESS
+
 } from 'src/core/auth';
 
 import {
